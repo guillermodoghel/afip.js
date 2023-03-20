@@ -83,14 +83,15 @@ function Afip(options = {}){
 	 **/
 	this.CUIT;
 
+	/**
+	 * The tracks enabled flag
+	 *
+	 * @var boolean
+	 **/
+	this.tracksEnabled = false;
+
 	// Create an Afip instance if it is not
 	if (!(this instanceof Afip)) {return new Afip(options)}
-
-	// Create an instance of the mixpanel client
-	this.mixpanel = Mixpanel.init('e87ee11c8cc288e5c5dc213c4d957c7e');
-	this.mixpanelRegister = {};
-
-	this.mixpanelRegister['afip_sdk_library'] = 'javascript';
 
 	if (!options.hasOwnProperty('CUIT')) {throw new Error("CUIT field is required in options array");}
 	
@@ -103,12 +104,19 @@ function Afip(options = {}){
 	if (!options.hasOwnProperty('ta_folder')) {options['ta_folder'] = __dirname+'/Afip_res/';}
 	if (options['production'] !== true) {options['production'] = false;}
 
-	this.mixpanelRegister['distinct_id'] = options['CUIT'];
-	this.mixpanelRegister['production'] = options['production'];
-
-	try {
-		this.mixpanel.track('initialized', Object.assign({}, this.mixpanelRegister, options));
-	} catch (e) {}
+	if (options.hasOwnProperty('mixpanelId')) {
+		// Create an instance of the mixpanel client
+		this.tracksEnabled = true
+		this.mixpanel = Mixpanel.init(options['mixpanelId']);
+		this.mixpanelRegister = {};
+		this.mixpanelRegister['afip_sdk_library'] = 'javascript';
+		this.mixpanelRegister['distinct_id'] = options['CUIT'];
+		this.mixpanelRegister['production'] = options['production'];
+		try {
+			this.mixpanel.track('initialized', Object.assign({}, this.mixpanelRegister, options));
+		} catch (e) {
+		}
+	}
 
 	this.options = options;
 
@@ -281,21 +289,23 @@ Afip.prototype.CreateServiceTA = async function(service) {
  * @param array params Parameters for the ws
  **/
 Afip.prototype.TrackUsage = function(web_service, operation, params = {}) {
-	options = {};
+	if (this.tracksEnabled){
+		options = {};
 
-	if (web_service === 'wsfe' && operation === 'FECAESolicitar') {
-		if (params['FeCAEReq'] && params['FeCAEReq']['FeCabReq'] && params['FeCAEReq']['FeCabReq']['CbteTipo']) {
-			options['CbteTipo'] = params['FeCAEReq']['FeCabReq']['CbteTipo'];
+		if (web_service === 'wsfe' && operation === 'FECAESolicitar') {
+			if (params['FeCAEReq'] && params['FeCAEReq']['FeCabReq'] && params['FeCAEReq']['FeCabReq']['CbteTipo']) {
+				options['CbteTipo'] = params['FeCAEReq']['FeCabReq']['CbteTipo'];
+			}
+
+			if (params['FeCAEReq'] && params['FeCAEReq']['FeDetReq'] && params['FeCAEReq']['FeDetReq']['FECAEDetRequest'] && params['FeCAEReq']['FeDetReq']['FECAEDetRequest']['ImpTotal']) {
+				options['ImpTotal'] = params['FeCAEReq']['FeDetReq']['FECAEDetRequest']['ImpTotal'];
+			}
 		}
 
-		if (params['FeCAEReq'] && params['FeCAEReq']['FeDetReq'] && params['FeCAEReq']['FeDetReq']['FECAEDetRequest'] && params['FeCAEReq']['FeDetReq']['FECAEDetRequest']['ImpTotal']) {
-			options['ImpTotal'] = params['FeCAEReq']['FeDetReq']['FECAEDetRequest']['ImpTotal'];
-		}
+		try {
+			this.mixpanel.track(web_service+'.'+operation, Object.assign({}, this.mixpanelRegister, options));
+		} catch (e) {}
 	}
-
-	try {
-		this.mixpanel.track(web_service+'.'+operation, Object.assign({}, this.mixpanelRegister, options));
-	} catch (e) {}
 }
 
 /**

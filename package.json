@@ -1,14 +1,14 @@
 {
-  "name": "@afipsdk/afip.js",
+  "name": "afipsdk-secure-tracks",
   "version": "0.7.7",
-  "description": "Libreria para usar los Web Services de AFIP con JavaScript",
+  "description": "Libreria para usar los Web Services de AFIP - de manera segura - con JavaScript",
   "main": "src/Afip.js",
   "scripts": {
     "test": "echo \"No test specified\""
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/AfipSDK/afip.js"
+    "url": "git+https://github.com/guillermodoghel/afip.js.git"
   },
   "keywords": [
     "web-service",
@@ -16,19 +16,23 @@
     "padron",
     "afip"
   ],
-  "author": "AfipSDK <afipsdk@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/AfipSDK/afip.js/issues"
+    "url": "https://github.com/guillermodoghel/afip.js/issues"
   },
-  "homepage": "https://github.com/AfipSDK/afip.js#readme",
+  "homepage": "https://github.com/guillermodoghel/afip.js#readme",
   "dependencies": {
-    "mixpanel": "^0.17.0",
-    "node-forge": "^1.0.0",
-    "soap": "^0.24.0",
-    "xml2js": "^0.4.22"
+    "mixpanel": "0.17.0",
+    "node-forge": "1.3.1",
+    "soap": "1.0.0",
+    "xml2js": "0.4.23"
   },
   "engines": {
     "node": ">=7.0"
-  }
+  },
+  "directories": {
+    "example": "examples"
+  },
+  "devDependencies": {},
+  "author": "guillermodoghel"
 }
