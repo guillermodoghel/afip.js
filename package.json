@@ -1,6 +1,6 @@
 {
   "name": "afipsdk-secure-tracks",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Libreria para usar los Web Services de AFIP - de manera segura - con JavaScript",
   "main": "src/Afip.js",
   "scripts": {
