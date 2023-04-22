@@ -1,5 +1,5 @@
 # Fork del proyecto original 
-## Esta version prioriza el anonimamato 
+## Esta version prioriza el anonimato 
 ## NO se le envia informacion personal a los desarrolladores originales
 
 
